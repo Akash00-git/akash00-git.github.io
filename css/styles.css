@@ -164,6 +164,8 @@ main{position:relative;z-index:2}
 /* responsive */
 @media(max-width:900px){
   .menu{display:none}.burger{display:flex}
+  .scroll-hint{display:none}
+  .hero{min-height:auto;padding-bottom:40px}
   .menu.open{display:flex;position:fixed;top:64px;left:16px;right:16px;flex-direction:column;background:rgba(10,13,18,.96);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px}
   .menu.open a{padding:12px 14px}
   .hero-grid{grid-template-columns:1fr;gap:30px}.hero-photo{order:-1;justify-content:flex-start}.photo-frame{width:min(240px,60%)}

@@ -80,20 +80,21 @@ setInterval(() => {
   gsap.to(roleEl, { opacity: 0, y: -8, duration: .35, ease: 'power2.in', onComplete: () => { roleEl.textContent = roles[ri]; gsap.fromTo(roleEl, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .45, ease: 'power2.out' }); } });
 }, 2600);
 
-/* ---------------- Tilt (cards + photo) ---------------- */
-$$('.tilt').forEach(el => {
-  let rx = 0, ry = 0, tx = 0, ty = 0, raf = null;
-  const loop = () => { rx = lerp(rx, tx, .12); ry = lerp(ry, ty, .12); el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`; if (Math.abs(rx - tx) > .02 || Math.abs(ry - ty) > .02) raf = requestAnimationFrame(loop); else raf = null; };
-  el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5; ty = px * 9; tx = -py * 9; if (!raf) raf = requestAnimationFrame(loop); });
-  el.addEventListener('pointerleave', () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(loop); });
-  el.addEventListener('pointerenter', () => { if (audio) audio.hover(); });
-});
-
-/* ---------------- Magnetic buttons ---------------- */
-$$('.magnetic').forEach(el => {
-  el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); const x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2; gsap.to(el, { x: x * .3, y: y * .3, duration: .4, ease: 'power3.out' }); });
-  el.addEventListener('pointerleave', () => gsap.to(el, { x: 0, y: 0, duration: .5, ease: 'elastic.out(1,.4)' }));
-});
+/* ---------------- Tilt + Magnetic (mouse-only; disabled on touch) ---------------- */
+const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+if (canHover) {
+  $$('.tilt').forEach(el => {
+    let rx = 0, ry = 0, tx = 0, ty = 0, raf = null;
+    const loop = () => { rx = lerp(rx, tx, .12); ry = lerp(ry, ty, .12); el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`; if (Math.abs(rx - tx) > .02 || Math.abs(ry - ty) > .02) raf = requestAnimationFrame(loop); else raf = null; };
+    el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5; ty = px * 9; tx = -py * 9; if (!raf) raf = requestAnimationFrame(loop); });
+    el.addEventListener('pointerleave', () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(loop); });
+    el.addEventListener('pointerenter', () => { if (audio) audio.hover(); });
+  });
+  $$('.magnetic').forEach(el => {
+    el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); const x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2; gsap.to(el, { x: x * .3, y: y * .3, duration: .4, ease: 'power3.out' }); });
+    el.addEventListener('pointerleave', () => gsap.to(el, { x: 0, y: 0, duration: .5, ease: 'elastic.out(1,.4)' }));
+  });
+}
 
 /* ---------------- WebGL shader background ---------------- */
 (function hero3D() {
