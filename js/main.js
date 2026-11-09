@@ -25,6 +25,8 @@ function finishLoad() {
     loader.classList.add('done');
     gsap.fromTo('.hero-text .reveal, .hero-text', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power3.out' });
     gsap.fromTo('.hero-photo', { y: 40, opacity: 0, scale: .96 }, { y: 0, opacity: 1, scale: 1, duration: 1.1, delay: .15, ease: 'power3.out' });
+    gsap.fromTo('.photo-frame img', { filter: 'blur(20px)', webkitFilter: 'blur(20px)', clipPath: 'inset(0 0 100% 0)', scale: 1.14, opacity: .4 }, { filter: 'blur(0px)', webkitFilter: 'blur(0px)', clipPath: 'inset(0 0 0% 0)', scale: 1, opacity: 1, duration: 1.7, delay: .45, ease: 'power2.out' });
+    gsap.to('.hero-photo', { y: '-=12', duration: 3.4, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2.1 });
     $$('.hero .reveal').forEach(e => e.classList.add('in'));
   }, 350);
 }
