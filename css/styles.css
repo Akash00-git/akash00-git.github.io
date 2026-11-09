@@ -171,7 +171,7 @@ main{position:relative;z-index:2}
   .hero-grid{grid-template-columns:1fr;gap:30px}.hero-photo{order:-1;justify-content:flex-start}.photo-frame{width:min(240px,60%)}
   .stats{grid-template-columns:repeat(2,1fr);gap:22px}
   .about-grid{grid-template-columns:1fr}.about-cards{grid-template-columns:1fr 1fr}
-  .cards{grid-template-columns:1fr}.card.feat{grid-column:span 1}
+  .cards{grid-template-columns:1fr 1fr}.card.feat{grid-column:span 2}
   .footer{justify-content:center;text-align:center}
 }
 @media(max-width:480px){.about-cards{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
@@ -180,6 +180,7 @@ main{position:relative;z-index:2}
   .clink{min-width:0;padding:12px 14px;word-break:break-word}
   .clink span{font-size:10px}
   .site-grid{grid-template-columns:1fr 1fr}
+  .cards{grid-template-columns:1fr}.card.feat{grid-column:span 1}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important}.reveal{opacity:1;transform:none}}
 
