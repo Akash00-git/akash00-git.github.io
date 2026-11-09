@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Akash M — Software Engineer · Full-Stack & Odoo ERP/CRM Developer</title>
+<meta name="description" content="Akash M — Software Engineer building production web & ERP systems (WordPress, WooCommerce, Odoo 19) and interactive 3D/WebGL experiences." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/styles.css" />
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js" } }
+</script>
+</head>
+<body>
+  <!-- scroll progress -->
+  <div id="progress"></div>
+
+  <!-- WebGL hero background -->
+  <canvas id="bg"></canvas>
+  <div class="grain"></div>
+
+  <!-- preloader -->
+  <div id="loader"><div class="loader-inner"><span class="loader-name">AKASH&nbsp;M</span><span class="loader-count" id="loaderPct">0</span></div></div>
+
+  <!-- NAV -->
+  <header id="nav">
+    <a href="#home" class="brand" data-nav>Akash<span>.</span>M</a>
+    <nav class="menu" id="menu">
+      <a href="#home" data-nav class="active">Home</a>
+      <a href="#about" data-nav>About</a>
+      <a href="#experience" data-nav>Experience</a>
+      <a href="#projects" data-nav>Projects</a>
+      <a href="#skills" data-nav>Skills</a>
+      <a href="#contact" data-nav>Contact</a>
+    </nav>
+    <div class="nav-right">
+      <button id="sound" class="sound" title="Sound"><span class="eq"><i></i><i></i><i></i></span></button>
+      <a href="./assets/Akash_M.pdf" class="btn btn-sm" target="_blank">Résumé</a>
+      <button id="burger" class="burger" aria-label="Menu"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section id="home" class="hero">
+      <div class="hero-grid">
+        <div class="hero-text reveal">
+          <div class="eyebrow"><span class="dot"></span> Software Engineer · Available for work</div>
+          <h1 class="hero-title"><span>AKASH</span> <span class="grad">M</span></h1>
+          <div class="hero-roles">
+            <span class="role-static">I build</span>
+            <span class="role-rotate" id="roleRotate"><b>Odoo ERP &amp; CRM systems</b></span>
+          </div>
+          <p class="hero-sub">Full-stack developer crafting production web &amp; ERP platforms — WordPress, WooCommerce and Odoo 19 — plus interactive 3D / WebGL experiences with Three.js. I turn messy business requirements into reliable, maintainable systems.</p>
+          <div class="hero-cta">
+            <a href="#projects" class="btn btn-primary magnetic" data-nav>View my work</a>
+            <a href="https://www.linkedin.com/in/akash-m-485126235" target="_blank" class="btn magnetic">LinkedIn ↗</a>
+            <a href="https://github.com/Akash00-git" target="_blank" class="btn magnetic">GitHub ↗</a>
+          </div>
+        </div>
+        <div class="hero-photo reveal">
+          <div class="photo-frame tilt">
+            <img src="./assets/akash.jpg" alt="Akash M" />
+            <div class="photo-glow"></div>
+            <div class="photo-badge"><b>3+ yrs</b><span>Full-Stack · Odoo</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint"><span>Scroll</span><i></i></div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats" id="statsSec">
+      <div class="stat"><div class="num" data-count="3" data-suffix="+">0</div><div class="lab">Years experience</div></div>
+      <div class="stat"><div class="num" data-count="15" data-suffix="+">0</div><div class="lab">Projects shipped</div></div>
+      <div class="stat"><div class="num" data-count="2" data-suffix="">0</div><div class="lab">Published Odoo apps</div></div>
+      <div class="stat"><div class="num" data-count="4700" data-suffix="+">0</div><div class="lab">Customers reached</div></div>
+      <div class="stat"><div class="num" data-count="9" data-suffix="+">0</div><div class="lab">Websites delivered</div></div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section">
+      <div class="sec-head reveal"><span class="sec-no">01</span><h2>About</h2></div>
+      <div class="about-grid">
+        <p class="about-lead reveal">I'm <b>Akash M</b>, a software engineer with 3+ years building and shipping production systems end-to-end. I've <b>published 2 apps on the official Odoo Apps marketplace</b>, integrated WordPress with Odoo ERP &amp; Zoho, and deployed a self-managed Oracle Cloud stack serving a live e-commerce business of <b>4,700+ customers</b>.</p>
+        <div class="about-cards">
+          <div class="mini reveal"><div class="mini-ic">◈</div><h4>Web Development</h4><p>WordPress &amp; WooCommerce — custom themes, plugins and full e-commerce builds.</p></div>
+          <div class="mini reveal"><div class="mini-ic">◆</div><h4>Odoo ERP / CRM</h4><p>Native Odoo 19 modules, ERP integrations, CRM automation and data migration.</p></div>
+          <div class="mini reveal"><div class="mini-ic">◉</div><h4>3D / WebGL</h4><p>Cinematic real-time experiences with Three.js — shaders, refraction, interaction.</p></div>
+          <div class="mini reveal"><div class="mini-ic">▚</div><h4>DevOps &amp; Cloud</h4><p>Oracle Cloud, Linux, Nginx, CI-style deploys with backups across environments.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="section">
+      <div class="sec-head reveal"><span class="sec-no">02</span><h2>Experience</h2></div>
+      <div class="timeline">
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-when">Mar 2026 — Present</div>
+          <div class="tl-body">
+            <h3>Software Engineer <span class="tl-co">· Choice Flowers L.L.C — Abu Dhabi, UAE (Remote)</span></h3>
+            <ul>
+              <li>Built &amp; published <b>2 SEO apps</b> on the official Odoo Apps marketplace (SEO Coach, Keyword Position Tracker) as native Odoo 19 modules.</li>
+              <li>Integrated WordPress / WooCommerce with Odoo ERP — real-time sync of 6 data types; built Odoo <b>CRM automation</b> (segmentation, nightly campaigns to 4,700+ customers, retention agent).</li>
+              <li>Migrated 2 Zoho systems into Odoo (duplicate-free) and moved the stack to a self-managed <b>Oracle Cloud</b> server across 3 environments.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-when">Apr 2022 — Sep 2025</div>
+          <div class="tl-body">
+            <h3>Software Engineer <span class="tl-co">· Prodbrew Innovations LLP — India</span></h3>
+            <ul>
+              <li>Delivered <b>9+ end-to-end client websites</b> with Elementor &amp; WPBakery.</li>
+              <li>Developed custom WordPress themes &amp; plugins, including a WooCommerce shipping plugin.</li>
+              <li>Implemented WooCommerce e-commerce — checkout customization, product management, API integration.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+      <div class="sec-head reveal"><span class="sec-no">03</span><h2>Projects</h2></div>
+      <div class="cards">
+        <a class="card tilt reveal" style="--a:#6ad5ff;--b:#4a7bff" href="https://apps.odoo.com/apps/modules/19.0/cf_seo_coach" target="_blank">
+          <div class="card-top"><span class="kick">Odoo App · Published</span><span class="arr">↗</span></div>
+          <h3>Odoo SEO Coach</h3>
+          <p>Yoast-style live on-page SEO &amp; readability coach for Odoo 19 — JSON-LD schema, GA4, site-audit health score. Live on the Odoo marketplace.</p>
+          <div class="tags"><span>Odoo 19</span><span>Python</span><span>SEO</span></div>
+        </a>
+        <a class="card tilt reveal" style="--a:#b79bff;--b:#7c5cff" href="https://github.com/Akash00-git/cf_keyword_tracker" target="_blank">
+          <div class="card-top"><span class="kick">Odoo App</span><span class="arr">↗</span></div>
+          <h3>Keyword Position Tracker</h3>
+          <p>Google rank tracking for Odoo 19 across Search Console, DataForSEO &amp; SerpApi — competitor tracking and automated email alerts.</p>
+          <div class="tags"><span>Odoo 19</span><span>Python</span><span>REST API</span></div>
+        </a>
+        <a class="card tilt reveal feat" style="--a:#5fe6c3;--b:#4a9bff" href="https://graceful-queijadas-172e51.netlify.app" target="_blank">
+          <div class="card-top"><span class="kick">Three.js · Live demo</span><span class="arr">↗</span></div>
+          <h3>Interactive 3D / WebGL Portfolio</h3>
+          <p>Cinematic real-time experiences — photoreal rain that opens into molecular chemistry, and an airliner anatomy explorer. Custom GLSL, refraction, procedural audio.</p>
+          <div class="tags"><span>Three.js</span><span>GLSL</span><span>WebGL</span><span>Web Audio</span></div>
+        </a>
+        <a class="card tilt reveal" style="--a:#ff7a8a;--b:#ff5fb0" href="https://www.choiceflowersuae.com/" target="_blank">
+          <div class="card-top"><span class="kick">WooCommerce · Live</span><span class="arr">↗</span></div>
+          <h3>Choice Flowers — UAE Storefront</h3>
+          <p>Live WooCommerce flower shop, synced two-way with Odoo ERP — products, pricing, inventory and orders in real time.</p>
+          <div class="tags"><span>WordPress</span><span>WooCommerce</span><span>Odoo Sync</span></div>
+        </a>
+        <a class="card tilt reveal" style="--a:#6ad5ff;--b:#9b7bff" href="https://www.choiceflowers.co/" target="_blank">
+          <div class="card-top"><span class="kick">Odoo 19 · Oracle Cloud</span><span class="arr">↗</span></div>
+          <h3>Choice Flowers — Odoo Platform</h3>
+          <p>Odoo 19 ERP &amp; website on a self-managed Oracle Cloud stack across production, staging and development, with automated backups.</p>
+          <div class="tags"><span>Odoo 19</span><span>Oracle Cloud</span><span>DevOps</span></div>
+        </a>
+        <a class="card tilt reveal" style="--a:#ffb36a;--b:#ff6a8a" href="https://elmitacoa.in/" target="_blank">
+          <div class="card-top"><span class="kick">Brand · E-commerce</span><span class="arr">↗</span></div>
+          <h3>elmitacoa.in</h3>
+          <p>Live brand &amp; e-commerce website — design, build and store setup for a consumer food label.</p>
+          <div class="tags"><span>WordPress</span><span>WooCommerce</span><span>E-commerce</span></div>
+        </a>
+        <div class="card tilt reveal" style="--a:#6ad5ff;--b:#9b7bff">
+          <div class="card-top"><span class="kick">ERP Integration</span></div>
+          <h3>WordPress ↔ Odoo ERP</h3>
+          <p>Two-way synchronization of products, pricing, inventory and orders between WooCommerce and Odoo — powering a live store in real time.</p>
+          <div class="tags"><span>Odoo</span><span>WooCommerce</span><span>REST/OAuth</span></div>
+        </div>
+        <div class="card tilt reveal" style="--a:#8affc1;--b:#4ad5ff">
+          <div class="card-top"><span class="kick">Data · DevOps</span></div>
+          <h3>Zoho → Odoo + Cloud Migration</h3>
+          <p>Migrated Zoho People &amp; Books into Odoo with duplicate-free imports, then moved the production stack to Oracle Cloud across 3 environments with automated backups.</p>
+          <div class="tags"><span>Oracle Cloud</span><span>Linux</span><span>PostgreSQL</span></div>
+        </div>
+        <a class="card tilt reveal" style="--a:#c6a0ff;--b:#6a8bff" href="https://github.com/Akash00-git/cf-omp-account-switcher-plugin" target="_blank">
+          <div class="card-top"><span class="kick">Open source · AI tooling</span><span class="arr">↗</span></div>
+          <h3>OMP Account Switcher</h3>
+          <p>Browser plugin to switch between logged-in AI accounts &amp; models (Claude, ChatGPT, Gemini, DeepSeek) without logging any out.</p>
+          <div class="tags"><span>JavaScript</span><span>LLM tooling</span></div>
+        </a>
+        <a class="card tilt reveal" style="--a:#ff9ad2;--b:#b76aff" href="https://www.styleinbling.com/" target="_blank">
+          <div class="card-top"><span class="kick">Fashion · E-commerce</span><span class="arr">↗</span></div>
+          <h3>Style in Bling</h3>
+          <p>Live fashion &amp; accessories e-commerce store — custom WordPress / WooCommerce build with product catalog, cart and checkout.</p>
+          <div class="tags"><span>WordPress</span><span>WooCommerce</span><span>E-commerce</span></div>
+        </a>
+      </div>
+
+      <div class="sub-head reveal"><h3>OMP · CF Switcher</h3><span>A slash-command palette to run many AI accounts &amp; models side by side — switch provider, model, account or prompt without ever logging out.</span></div>
+      <div class="cmd-grid">
+        <div class="cmd reveal"><code>/cf_account_switch</code><p>Pick which logged-in account and model to use.</p></div>
+        <div class="cmd reveal"><code>/cf_account_list</code><p>Show every account and the model each one is using.</p></div>
+        <div class="cmd reveal"><code>/cf_account_next</code><p>Flip to the next account on the same provider.</p></div>
+        <div class="cmd reveal"><code>/cf_model</code><p>Pick which model / provider to use.</p></div>
+        <div class="cmd reveal"><code>/cf_prompt_edit</code><p>Edit an earlier prompt and resend the chat from there.</p></div>
+        <div class="cmd reveal"><code>/cf_chat_rename</code><p>Rename the current chat / session.</p></div>
+      </div>
+
+      <div class="sub-head reveal"><h3>Client Websites</h3><span>End-to-end WordPress / WooCommerce builds — delivered at Prodbrew</span></div>
+      <div class="site-grid">
+        <a class="site reveal" href="https://samarth.community/" target="_blank"><b>Samarth</b><span>samarth.community</span><i>↗</i></a>
+        <a class="site reveal" href="https://coacharya.com/" target="_blank"><b>Coacharya</b><span>coacharya.com</span><i>↗</i></a>
+        <a class="site reveal" href="https://unstract.com/" target="_blank"><b>Unstract</b><span>unstract.com</span><i>↗</i></a>
+        <a class="site reveal" href="https://www.ringerwindows.com/" target="_blank"><b>Ringer Windows</b><span>ringerwindows.com</span><i>↗</i></a>
+        <a class="site reveal" href="https://bkwire.com/" target="_blank"><b>BKWIRE</b><span>bkwire.com</span><i>↗</i></a>
+        <a class="site reveal" href="https://originnutrition.in/" target="_blank"><b>Origin Nutrition</b><span>originnutrition.in</span><i>↗</i></a>
+        <a class="site reveal" href="https://www.choicebagging.com/" target="_blank"><b>Choice Bagging</b><span>choicebagging.com</span><i>↗</i></a>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="section">
+      <div class="sec-head reveal"><span class="sec-no">04</span><h2>Skills</h2></div>
+      <div class="skills-grid">
+        <div class="skgroup reveal"><h4>Languages</h4><div class="chips"><span>PHP</span><span>Python</span><span>JavaScript</span><span>SQL</span><span>HTML5</span><span>CSS3</span></div></div>
+        <div class="skgroup reveal"><h4>Platforms</h4><div class="chips"><span>Odoo 19</span><span>WordPress</span><span>WooCommerce</span><span>Three.js</span><span>Elementor</span></div></div>
+        <div class="skgroup reveal"><h4>APIs &amp; Integrations</h4><div class="chips"><span>REST API</span><span>OAuth 2.0</span><span>Search Console</span><span>GA4</span><span>DataForSEO</span><span>Zoho</span></div></div>
+        <div class="skgroup reveal"><h4>Data &amp; Cloud</h4><div class="chips"><span>MySQL</span><span>PostgreSQL</span><span>Oracle Cloud</span><span>Linux</span><span>Nginx</span><span>Git</span><span>Cloudflare</span></div></div>
+        <div class="skgroup reveal"><h4>Specialties</h4><div class="chips"><span>Odoo CRM</span><span>API Integration</span><span>Performance</span><span>SEO</span><span>Web Security</span></div></div>
+      </div>
+      <div class="marquee" aria-hidden="true"><div class="mq-track"><span>Odoo 19</span><span>•</span><span>WordPress</span><span>•</span><span>Python</span><span>•</span><span>WooCommerce</span><span>•</span><span>Three.js</span><span>•</span><span>Oracle Cloud</span><span>•</span><span>PHP</span><span>•</span><span>REST API</span><span>•</span><span>PostgreSQL</span><span>•</span><span>CRM</span><span>•</span><span>Odoo 19</span><span>•</span><span>WordPress</span><span>•</span><span>Python</span><span>•</span><span>WooCommerce</span><span>•</span><span>Three.js</span><span>•</span><span>Oracle Cloud</span><span>•</span><span>PHP</span><span>•</span><span>REST API</span><span>•</span><span>PostgreSQL</span><span>•</span><span>CRM</span><span>•</span></div></div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section contact">
+      <div class="sec-head reveal"><span class="sec-no">05</span><h2>Contact</h2></div>
+      <div class="contact-inner reveal">
+        <h3 class="contact-big">Let's build something<br><span class="grad">exceptional.</span></h3>
+        <p class="contact-sub">Open to Software Engineer / Full-Stack roles — remote or on-site. The fastest way to reach me:</p>
+        <div class="contact-links">
+          <a href="mailto:akashmvd34@gmail.com" class="clink magnetic"><span>Email</span>akashmvd34@gmail.com</a>
+          <a href="https://www.linkedin.com/in/akash-m-485126235" target="_blank" class="clink magnetic"><span>LinkedIn</span>in/akash-m</a>
+          <a href="https://github.com/Akash00-git" target="_blank" class="clink magnetic"><span>GitHub</span>Akash00-git</a>
+          <a href="https://graceful-queijadas-172e51.netlify.app" target="_blank" class="clink magnetic"><span>3D Portfolio</span>Live demo ↗</a>
+        </div>
+      </div>
+      <footer class="footer">
+        <span>© 2026 Akash M — Kanyakumari, India</span>
+        <span>Built with Three.js · GSAP · Lenis</span>
+      </footer>
+    </section>
+  </main>
+
+  <script src="./vendor/gsap.min.js"></script>
+  <script src="./vendor/ScrollTrigger.min.js"></script>
+  <script src="./vendor/lenis.min.js"></script>
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
