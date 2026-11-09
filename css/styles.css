@@ -175,6 +175,12 @@ main{position:relative;z-index:2}
   .footer{justify-content:center;text-align:center}
 }
 @media(max-width:480px){.about-cards{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){
+  .contact-links{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .clink{min-width:0;padding:12px 14px;word-break:break-word}
+  .clink span{font-size:10px}
+  .site-grid{grid-template-columns:1fr 1fr}
+}
 @media(prefers-reduced-motion:reduce){*{animation:none!important}.reveal{opacity:1;transform:none}}
 
 /* client websites sub-section */
