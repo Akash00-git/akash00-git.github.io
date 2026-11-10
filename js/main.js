@@ -17,9 +17,38 @@ if (Lenis) {
 const goTo = (target) => { if (lenis) lenis.scrollTo(target, { offset: -70, duration: 1.2 }); else target.scrollIntoView({ behavior: 'smooth' }); };
 
 /* ---------------- Preloader ---------------- */
-const loader = $('#loader'), pct = $('#loaderPct');
-let p = 0;
-const pint = setInterval(() => { p = Math.min(100, p + Math.random() * 18); pct.textContent = Math.floor(p); if (p >= 100) { clearInterval(pint); finishLoad(); } }, 110);
+const loader = $('#loader'), pct = $('#loaderPct'), bootDecode = $('#bootDecode'), bootFill = $('#bootFill'), bootStatus = $('#bootStatus');
+const DECODE_TARGET = 'SOFTWARE ENGINEER';
+const GLY = '!<>-_\\/[]{}=+*^?#01ABCDEFGHJKLMNPQRSTUVWXYZ';
+const STATUS = ['AWAITING INPUT', 'BOOTING KERNEL', 'DECRYPTING IDENTITY', 'LOADING MODULES', 'COMPILING SHADERS', 'ESTABLISHING LINK', 'ACCESS GRANTED'];
+let booted = false;
+function scrambleText(resolved, full) { let s = ''; for (let i = 0; i < full.length; i++) { if (i < resolved) s += full[i]; else if (full[i] === ' ') s += ' '; else s += GLY[(Math.random() * GLY.length) | 0]; } return s; }
+const bfx = {
+  ctx: null, on: false,
+  start() { try { const AC = window.AudioContext || window.webkitAudioContext; this.ctx = new AC(); this.ctx.resume(); this.on = true; } catch (e) {} },
+  blip(f, dur, g, type) { if (!this.on) return; const t = this.ctx.currentTime, o = this.ctx.createOscillator(), gn = this.ctx.createGain(); o.type = type || 'square'; o.frequency.value = f; gn.gain.setValueAtTime(0, t); gn.gain.linearRampToValueAtTime(g, t + .004); gn.gain.exponentialRampToValueAtTime(.0004, t + dur); o.connect(gn); gn.connect(this.ctx.destination); o.start(t); o.stop(t + dur + .02); },
+  glitch() { if (!this.on) return; const n = this.ctx.sampleRate * .08, b = this.ctx.createBuffer(1, n, this.ctx.sampleRate), d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n); const s = this.ctx.createBufferSource(); s.buffer = b; const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1200 + Math.random() * 2600; const g = this.ctx.createGain(); g.gain.value = .05; s.connect(bp); bp.connect(g); g.connect(this.ctx.destination); s.start(); },
+  chord() { if (!this.on) return; [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => setTimeout(() => this.blip(f, .5, .07, 'triangle'), i * 70)); },
+};
+function runBoot(withSound) {
+  if (booted) return; booted = true;
+  loader.classList.add('booting'); if (withSound) bfx.start();
+  let p = 0, tick = 0;
+  const iv = setInterval(() => {
+    p = Math.min(100, p + (Math.random() < .15 ? 0 : Math.random() * 6 + 1.6));
+    const resolved = Math.floor(DECODE_TARGET.length * (p / 100));
+    bootDecode.textContent = p >= 100 ? DECODE_TARGET : scrambleText(resolved, DECODE_TARGET);
+    bootFill.style.right = (100 - p) + '%';
+    pct.textContent = String(Math.floor(p)).padStart(2, '0');
+    bootStatus.textContent = STATUS[Math.min(STATUS.length - 1, Math.floor(p / 100 * STATUS.length))];
+    if (tick % 2 === 0) bfx.blip(360 + Math.random() * 950, .04, .035, 'square');
+    if (Math.random() < .14) bfx.glitch();
+    tick++;
+    if (p >= 100) { clearInterval(iv); bootDecode.textContent = DECODE_TARGET; bootStatus.textContent = 'ACCESS GRANTED'; bfx.chord(); loader.classList.remove('booting'); setTimeout(finishLoad, 700); }
+  }, 70);
+}
+['pointerdown', 'keydown', 'touchstart'].forEach(ev => addEventListener(ev, () => runBoot(true), { once: true }));
+setTimeout(() => runBoot(false), 2200);
 function finishLoad() {
   setTimeout(() => {
     loader.classList.add('done');
