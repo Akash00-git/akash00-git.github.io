@@ -397,18 +397,18 @@ $('#pX').onclick = () => select(null);
 const GLY = '!<>-_\\/[]{}=+*^?#01ABCDEFGHJKLMNPQRSTUVWXYZ';
 let revealTok = 0;
 function decodeInto(el, text, dur, snd) {
-  const id = ++revealTok; const start = performance.now();
+  const id = (el.__tok = (el.__tok || 0) + 1); const start = performance.now();
   (function step(now) {
-    if (id !== revealTok) return; const t = clamp((now - start) / dur, 0, 1); const res = Math.floor(text.length * t);
+    if (id !== el.__tok) return; const t = clamp((now - start) / dur, 0, 1); const res = Math.floor(text.length * t);
     let s = ''; for (let i = 0; i < text.length; i++) s += i < res ? text[i] : (text[i] === ' ' ? ' ' : GLY[(Math.random() * GLY.length) | 0]); el.textContent = s;
     if (snd && Math.random() < .5) audio.tick();
     if (t < 1) requestAnimationFrame(step); else el.textContent = text;
   })(start);
 }
 function typeInto(el, text, dur, snd) {
-  const id = ++revealTok; const start = performance.now();
+  const id = (el.__tok = (el.__tok || 0) + 1); const start = performance.now();
   (function step(now) {
-    if (id !== revealTok) return; const t = clamp((now - start) / dur, 0, 1); const n = Math.floor(text.length * t);
+    if (id !== el.__tok) return; const t = clamp((now - start) / dur, 0, 1); const n = Math.floor(text.length * t);
     el.textContent = text.slice(0, n) + (t < 1 ? '▌' : ''); if (snd && n % 2 === 0) audio.tick();
     if (t < 1) requestAnimationFrame(step); else el.textContent = text;
   })(start);
