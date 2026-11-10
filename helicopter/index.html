@@ -36,6 +36,10 @@
     font-family:ui-monospace,monospace; font-size:11px; letter-spacing:.18em; color:var(--muted); background:rgba(8,14,20,.55);
     border:1px solid var(--line); border-radius:4px; padding:8px 13px; transition:.25s; }
   #sound:hover,#sound.on{ color:var(--hud); border-color:var(--hud); box-shadow:0 0 16px rgba(95,230,255,.25); }
+  #freeze{ position:fixed; right:150px; top:28px; z-index:13; pointer-events:auto; cursor:pointer; font:inherit;
+    font-family:ui-monospace,monospace; font-size:11px; letter-spacing:.18em; color:var(--muted); background:rgba(8,14,20,.55);
+    border:1px solid var(--line); border-radius:4px; padding:8px 13px; transition:.25s; }
+  #freeze:hover,#freeze.on{ color:var(--amb); border-color:var(--amb); box-shadow:0 0 16px rgba(255,194,77,.22); }
 
   /* floating hover label */
   #tag{ position:fixed; z-index:12; pointer-events:none; font-family:ui-monospace,monospace; font-size:11px; letter-spacing:.12em;
@@ -108,6 +112,7 @@
   <a class="back mono" href="../">‹ BACK TO PORTFOLIO</a>
 
   <button id="sound" class="mono">◼ SOUND OFF</button>
+  <button id="freeze" class="mono">⏸ FREEZE</button>
   <div id="tag" class="mono"></div>
 
   <aside id="panel">
@@ -137,6 +142,6 @@
   </div>
   <div id="fallback"><p>This experience needs <strong>WebGL</strong>. Open it in an up-to-date Chrome, Edge, Firefox or Safari with hardware acceleration on.</p></div>
 
-  <script type="module" src="./src/main.js?v=2"></script>
+  <script type="module" src="./src/main.js?v=3"></script>
 </body>
 </html>

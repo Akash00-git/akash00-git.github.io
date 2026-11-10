@@ -441,14 +441,14 @@ function select(key) {
     P.panel.classList.add('open');
     setHover(key); audio.swoosh(); setTimeout(() => audio.digital(), 120);
     // frame the part, offset so panel (right) doesn't cover it
-    const c = partCenter(key); controls.autoRotate = false;
+    const c = partCenter(key); controls.autoRotate = false; if (bootDone && !frozen) { rotorGoal = 0.22; audio.setRotor(0.22); }
     const dir = camera.position.clone().sub(controls.target).normalize();
     const dist = clamp(key === 'mainRotor' || key === 'fuselage' || key === 'tailBoom' ? 15 : 9, controls.minDistance, controls.maxDistance);
     const camGoal = c.clone().add(dir.multiplyScalar(dist)).add(new THREE.Vector3(0, 1.5, 0));
     tweenTo(c, camGoal, 1100);
     canvas.classList.remove('aim'); tag.classList.remove('show');
   } else {
-    P.panel.classList.remove('open'); setHover(null);
+    P.panel.classList.remove('open'); setHover(null); if (bootDone && !frozen) { rotorGoal = 1; audio.setRotor(1); }
     if (audio.on) audio.swoosh();
     tweenTo(new THREE.Vector3(0, 0.2, 0), camera.position.clone().sub(controls.target).normalize().multiplyScalar(16).add(new THREE.Vector3(0, 2, 0)), 1000);
     setTimeout(() => { if (!selected) controls.autoRotate = true; }, 2600);
@@ -457,8 +457,15 @@ function select(key) {
 
 /* sound toggle + gesture */
 const sndBtn = $('#sound');
-sndBtn.onclick = () => { if (!audio.on) { if (audio.enable()) { sndBtn.classList.add('on'); sndBtn.textContent = '◼ SOUND ON'; audio.setRotor(bootDone ? 1 : 0); } } else { audio.disable(); sndBtn.classList.remove('on'); sndBtn.textContent = '◼ SOUND OFF'; } };
-let gestured = false; function firstGesture() { if (gestured) return; gestured = true; if (audio.enable()) { sndBtn.classList.add('on'); sndBtn.textContent = '◼ SOUND ON'; audio.setRotor(bootDone ? 1 : 0); } }
+sndBtn.onclick = () => { if (!audio.on) { if (audio.enable()) { sndBtn.classList.add('on'); sndBtn.textContent = '◼ SOUND ON'; audio.setRotor(bootDone && !frozen ? 1 : 0); } } else { audio.disable(); sndBtn.classList.remove('on'); sndBtn.textContent = '◼ SOUND OFF'; } };
+let gestured = false; function firstGesture() { if (gestured) return; gestured = true; if (audio.enable()) { sndBtn.classList.add('on'); sndBtn.textContent = '◼ SOUND ON'; audio.setRotor(bootDone && !frozen ? 1 : 0); } }
+let frozen = false;
+const frzBtn = $('#freeze');
+frzBtn.onclick = () => {
+  frozen = !frozen; frzBtn.classList.toggle('on', frozen); frzBtn.textContent = frozen ? '▶ RESUME' : '⏸ FREEZE';
+  if (frozen) { rotorGoal = 0; controls.autoRotate = false; audio.setRotor(0); }
+  else { rotorGoal = bootDone ? (selected ? 0.22 : 1) : rotorGoal; if (!selected) controls.autoRotate = true; audio.setRotor(bootDone ? rotorGoal : 0); }
+};
 
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); });
 
@@ -499,8 +506,8 @@ const clock = new THREE.Clock();
 function frame() {
   const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
   rotorSpin = damp(rotorSpin, rotorGoal, 1.2, dt);
-  rotorGroup.rotation.y += dt * (2 + rotorSpin * 38);
-  tailRotorGroup.rotation.x += dt * (2 + rotorSpin * 46);
+  rotorGroup.rotation.y += dt * rotorSpin * 16;
+  tailRotorGroup.rotation.x += dt * rotorSpin * 22;
   rotorDisc.material.opacity = clamp((rotorSpin - 0.5) * 0.5, 0, 0.22);
   heli.position.y = Math.sin(t * 0.6) * 0.04;
   rimC.position.x = Math.sin(t * 0.3) * 13; rimC.position.z = Math.cos(t * 0.3) * 11;
