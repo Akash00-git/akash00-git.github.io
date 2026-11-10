@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>LCH — Attack Helicopter · Interactive 3D</title>
+<style>
+  :root{ --hud:#5fe6ff; --grn:#7dff9b; --amb:#ffc24d; --fg:#dfeefb; --muted:#7f93a8; --line:rgba(95,230,255,.22); --bg:#05080c; }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ height:100%; background:var(--bg); color:var(--fg); overflow:hidden;
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; -webkit-font-smoothing:antialiased; }
+  .mono{ font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace; }
+  #scene{ position:fixed; inset:0; width:100%; height:100%; display:block; cursor:grab; }
+  #scene.grab{ cursor:grabbing; } #scene.aim{ cursor:crosshair; }
+
+  /* HUD frame */
+  #hud{ position:fixed; inset:0; z-index:10; pointer-events:none; }
+  .bracket{ position:absolute; width:46px; height:46px; border:1.5px solid var(--line); }
+  .bracket.tl{ left:20px; top:20px; border-right:0; border-bottom:0; }
+  .bracket.tr{ right:20px; top:20px; border-left:0; border-bottom:0; }
+  .bracket.bl{ left:20px; bottom:20px; border-right:0; border-top:0; }
+  .bracket.br{ right:20px; bottom:20px; border-left:0; border-top:0; }
+  .scan{ position:fixed; inset:0; z-index:9; pointer-events:none; opacity:.35;
+    background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(95,230,255,.05) 3px,transparent 4px); }
+
+  .title{ position:fixed; left:34px; top:34px; z-index:11; }
+  .title h1{ font-family:ui-monospace,monospace; font-size:16px; font-weight:600; letter-spacing:.34em; color:var(--hud); text-shadow:0 0 14px rgba(95,230,255,.4); }
+  .title .sub{ margin-top:6px; font-size:10.5px; letter-spacing:.2em; color:var(--muted); max-width:34ch; line-height:1.6; }
+  .title .stat{ margin-top:8px; font-size:10px; letter-spacing:.14em; color:var(--grn); }
+  .title .stat b{ color:var(--grn); }
+
+  .hint{ position:fixed; left:34px; bottom:34px; z-index:11; font-family:ui-monospace,monospace; font-size:10.5px; letter-spacing:.14em; color:var(--muted); }
+  .hint span{ color:var(--hud); }
+
+  #sound{ position:fixed; right:28px; top:28px; z-index:13; pointer-events:auto; cursor:pointer; font:inherit;
+    font-family:ui-monospace,monospace; font-size:11px; letter-spacing:.18em; color:var(--muted); background:rgba(8,14,20,.55);
+    border:1px solid var(--line); border-radius:4px; padding:8px 13px; transition:.25s; }
+  #sound:hover,#sound.on{ color:var(--hud); border-color:var(--hud); box-shadow:0 0 16px rgba(95,230,255,.25); }
+
+  /* floating hover label */
+  #tag{ position:fixed; z-index:12; pointer-events:none; font-family:ui-monospace,monospace; font-size:11px; letter-spacing:.12em;
+    color:var(--hud); background:rgba(6,12,18,.82); border:1px solid var(--line); padding:5px 10px; border-radius:3px;
+    transform:translate(16px,-50%); opacity:0; transition:opacity .15s; white-space:nowrap; }
+  #tag.show{ opacity:1; }
+  #tag::before{ content:"▸ "; color:var(--grn); }
+
+  /* info panel */
+  #panel{ position:fixed; top:0; right:0; height:100%; width:min(430px,88vw); z-index:12;
+    padding:min(9vh,78px) min(4vw,40px); display:flex; flex-direction:column; gap:16px; overflow-y:auto; pointer-events:none;
+    background:linear-gradient(90deg,rgba(5,8,12,0),rgba(5,9,14,.82) 16%,rgba(4,8,13,.95));
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    transform:translateX(104%); transition:transform .7s cubic-bezier(.16,.84,.26,1); border-left:1px solid var(--line); }
+  #panel.open{ transform:none; pointer-events:auto; }
+  .p-top{ display:flex; align-items:center; justify-content:space-between; }
+  .p-id{ font-family:ui-monospace,monospace; font-size:11px; letter-spacing:.24em; color:var(--grn); }
+  .p-x{ pointer-events:auto; cursor:pointer; width:30px; height:30px; border:1px solid var(--line); background:none; color:var(--muted); border-radius:4px; font-size:14px; transition:.2s; }
+  .p-x:hover{ color:var(--hud); border-color:var(--hud); }
+  .p-name{ font-family:ui-monospace,monospace; font-size:clamp(22px,3vw,30px); font-weight:600; color:#fff; letter-spacing:.02em; min-height:1.1em; }
+  .p-role{ font-size:11.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--hud); }
+  .p-sec{ font-family:ui-monospace,monospace; font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:var(--amb); margin-top:4px; }
+  .p-sec::before{ content:"// "; opacity:.6; }
+  .p-text{ font-size:13.5px; line-height:1.72; font-weight:300; color:#c6d5e6; }
+  .p-mats{ display:flex; flex-wrap:wrap; gap:7px; }
+  .p-mats span{ font-family:ui-monospace,monospace; font-size:11px; color:#d7e4f2; border:1px solid var(--line); border-radius:3px; padding:4px 9px; background:rgba(95,230,255,.04); }
+  .p-specs{ display:grid; grid-template-columns:auto 1fr; gap:6px 14px; font-family:ui-monospace,monospace; font-size:12.5px; }
+  .p-specs dt{ color:var(--muted); } .p-specs dd{ text-align:right; color:#eaf3fb; }
+
+  /* part index dots */
+  #dots{ position:fixed; right:28px; top:50%; transform:translateY(-50%); z-index:11; display:flex; flex-direction:column; gap:11px; pointer-events:auto; }
+  #panel.open ~ #dots{ opacity:0; }
+  .dot{ position:relative; width:9px; height:9px; border:1px solid var(--line); background:rgba(95,230,255,.08); cursor:pointer; transition:.2s; transform:rotate(45deg); }
+  .dot:hover,.dot.active{ background:var(--hud); border-color:var(--hud); box-shadow:0 0 10px var(--hud); }
+  .dot span{ position:absolute; right:18px; top:50%; transform:translateY(-50%) rotate(-45deg); white-space:nowrap; font-family:ui-monospace,monospace; font-size:10px; letter-spacing:.08em; color:var(--muted); opacity:0; transition:.2s; }
+  .dot:hover span{ opacity:1; color:var(--hud); }
+
+  /* boot overlay */
+  #boot{ position:fixed; inset:0; z-index:40; background:#04070a; display:grid; place-items:center; cursor:pointer; transition:opacity .8s,visibility .8s; }
+  #boot.done{ opacity:0; visibility:hidden; }
+  .boot-in{ width:min(560px,86vw); text-align:center; }
+  .boot-t{ font-family:ui-monospace,monospace; font-size:clamp(24px,5vw,44px); font-weight:600; letter-spacing:.2em; color:var(--hud); text-shadow:0 0 18px rgba(95,230,255,.4); }
+  .boot-d{ margin-top:16px; font-family:ui-monospace,monospace; font-size:clamp(12px,2.2vw,16px); letter-spacing:.26em; color:var(--grn); min-height:1.4em; }
+  .boot-bar{ margin:22px auto 0; height:2px; width:100%; background:rgba(95,230,255,.12); position:relative; overflow:hidden; }
+  .boot-fill{ position:absolute; inset:0 100% 0 0; background:linear-gradient(90deg,var(--hud),var(--grn)); box-shadow:0 0 12px var(--hud); }
+  .boot-meta{ display:flex; justify-content:space-between; margin-top:9px; font-family:ui-monospace,monospace; font-size:10.5px; letter-spacing:.16em; color:var(--muted); }
+  .boot-hint{ margin-top:26px; font-family:ui-monospace,monospace; font-size:11px; letter-spacing:.22em; color:var(--muted); animation:bp 1.4s ease-in-out infinite; }
+  #boot.booting .boot-hint{ display:none; }
+  @keyframes bp{ 0%,100%{opacity:.35} 50%{opacity:1} }
+
+  #fallback{ position:fixed; inset:0; z-index:50; display:none; place-items:center; text-align:center; padding:30px; background:#04070a; }
+  #fallback.show{ display:grid; } #fallback p{ max-width:460px; color:var(--muted); line-height:1.7; }
+  .back{ position:fixed; left:34px; top:114px; z-index:13; pointer-events:auto; font-family:ui-monospace,monospace; font-size:10.5px; letter-spacing:.16em; color:var(--muted); text-decoration:none; opacity:.8; transition:.2s; }
+  .back:hover{ color:var(--hud); }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/jsm/" } }
+</script>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <div class="scan"></div>
+  <div id="hud"><div class="bracket tl"></div><div class="bracket tr"></div><div class="bracket bl"></div><div class="bracket br"></div></div>
+
+  <div class="title">
+    <h1>L&middot;C&middot;H</h1>
+    <div class="sub mono">LIGHT COMBAT HELICOPTER — INTERACTIVE TEARDOWN</div>
+    <div class="stat mono">◂ SYSTEM <b>ONLINE</b> &middot; <span id="partcount">11</span> SUBSYSTEMS</div>
+  </div>
+  <a class="back mono" href="../">‹ BACK TO PORTFOLIO</a>
+
+  <button id="sound" class="mono">◼ SOUND OFF</button>
+  <div id="tag" class="mono"></div>
+
+  <aside id="panel">
+    <div class="p-top"><span class="p-id mono" id="pId">// SUBSYSTEM 00</span><button class="p-x" id="pX">✕</button></div>
+    <div class="p-name mono" id="pName">—</div>
+    <div class="p-role" id="pRole">—</div>
+    <div class="p-sec">Function</div>
+    <p class="p-text" id="pPurpose"></p>
+    <div class="p-sec">Materials</div>
+    <div class="p-mats" id="pMats"></div>
+    <div class="p-sec">Specification</div>
+    <dl class="p-specs" id="pSpecs"></dl>
+  </aside>
+
+  <div id="dots"></div>
+
+  <div class="hint mono">DRAG <span>orbit</span> &middot; SCROLL <span>zoom</span> &middot; CLICK A PART <span>analyse</span></div>
+
+  <div id="boot">
+    <div class="boot-in">
+      <div class="boot-t">L C H &middot; 6102</div>
+      <div class="boot-d mono" id="bootD">STANDBY</div>
+      <div class="boot-bar"><div class="boot-fill" id="bootFill"></div></div>
+      <div class="boot-meta mono"><span id="bootStat">AWAITING OPERATOR</span><span id="bootPct">00</span></div>
+      <div class="boot-hint mono" id="bootHint">▶ CLICK TO INITIALISE SYSTEMS</div>
+    </div>
+  </div>
+  <div id="fallback"><p>This experience needs <strong>WebGL</strong>. Open it in an up-to-date Chrome, Edge, Firefox or Safari with hardware acceleration on.</p></div>
+
+  <script type="module" src="./src/main.js?v=1"></script>
+</body>
+</html>
