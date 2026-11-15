@@ -104,7 +104,7 @@ $$('.stat .num').forEach(el => {
 });
 
 /* ---------------- Role rotator ---------------- */
-const roles = ['Odoo ERP & CRM systems', 'WordPress & WooCommerce stores', 'interactive 3D / WebGL experiences', 'reliable, maintainable software'];
+const roles = ['Odoo ERP & CRM systems', 'HRMS & attendance systems', 'WordPress & WooCommerce stores', 'interactive 3D / WebGL experiences', 'reliable, maintainable software'];
 const roleEl = $('#roleRotate b'); let ri = 0;
 setInterval(() => {
   ri = (ri + 1) % roles.length;
