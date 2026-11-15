@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Helicopter Archive — How it was built · Akash M</title>
+<meta name="description" content="How the Helicopter Archive was built: four real helicopters modelled in Blender with Python, shown in the browser with Three.js, GLSL film effects and live sound — explained in plain words." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#060708; --bg2:#0b0d12; --fg:#e9edf4; --muted:#8a94a6; --line:rgba(150,180,255,.12);
+    --c1:#6ad5ff; --c2:#b79bff; --c3:#5fe6c3; --glass:rgba(18,22,30,.55); --maxw:1080px;
+    --ff-d:"Space Grotesk",ui-sans-serif,system-ui,sans-serif; --ff-b:"Inter",ui-sans-serif,system-ui,-apple-system,sans-serif; }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ background:radial-gradient(1200px 600px at 80% -10%,rgba(106,213,255,.08),transparent 60%),radial-gradient(900px 500px at -10% 30%,rgba(183,155,255,.06),transparent 60%),var(--bg);
+    color:var(--fg); font-family:var(--ff-b); font-weight:300; line-height:1.7; -webkit-font-smoothing:antialiased; }
+  a{ color:inherit; text-decoration:none; }
+  img{ display:block; max-width:100%; }
+  .wrap{ width:min(var(--maxw),90vw); margin:0 auto; }
+
+  /* top bar */
+  .top{ position:sticky; top:0; z-index:20; backdrop-filter:blur(12px); background:rgba(6,7,8,.72); border-bottom:1px solid var(--line); }
+  .top .wrap{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .back{ font-family:var(--ff-d); font-weight:600; letter-spacing:.02em; color:var(--muted); transition:.2s; } .back:hover{ color:var(--fg); }
+  .btn{ display:inline-flex; align-items:center; gap:8px; font-family:var(--ff-d); font-weight:600; font-size:15px; padding:11px 20px; border-radius:999px; border:1px solid var(--line); transition:.25s; }
+  .btn-live{ color:#041016; background:linear-gradient(100deg,var(--c1),var(--c3)); border:0; box-shadow:0 8px 30px rgba(106,213,255,.25); }
+  .btn-live:hover{ transform:translateY(-2px); box-shadow:0 12px 40px rgba(106,213,255,.4); }
+  .btn-ghost:hover{ border-color:var(--c1); color:var(--c1); }
+
+  /* hero */
+  .hero{ padding:72px 0 40px; }
+  .kick{ font-family:ui-monospace,Menlo,monospace; font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--c1); }
+  h1{ font-family:var(--ff-d); font-size:clamp(38px,6vw,64px); font-weight:700; line-height:1.05; margin:14px 0 18px; letter-spacing:-.01em; }
+  h1 span{ background:linear-gradient(100deg,var(--c1),var(--c2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .lead{ font-size:clamp(17px,2vw,19.5px); color:#c9d3e2; max-width:760px; }
+  .cta{ display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; }
+  .shot{ margin-top:44px; border-radius:16px; overflow:hidden; border:1px solid var(--line); box-shadow:0 30px 80px rgba(0,0,0,.55); }
+
+  /* facts */
+  .facts{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:36px 0 10px; }
+  .fact{ background:var(--glass); border:1px solid var(--line); border-radius:14px; padding:18px; }
+  .fact b{ display:block; font-family:var(--ff-d); font-size:28px; font-weight:700; color:#fff; }
+  .fact span{ font-size:13.5px; color:var(--muted); }
+
+  section{ padding:56px 0 8px; }
+  h2{ font-family:var(--ff-d); font-size:clamp(26px,3.4vw,36px); font-weight:700; margin-bottom:10px; }
+  h2 small{ display:block; font-family:ui-monospace,Menlo,monospace; font-size:12px; letter-spacing:.22em; color:var(--c3); font-weight:500; margin-bottom:8px; text-transform:uppercase; }
+  .sub{ color:var(--muted); max-width:760px; margin-bottom:26px; font-size:16.5px; }
+  p.body{ color:#c9d3e2; font-size:16.5px; max-width:780px; margin-bottom:14px; }
+
+  /* tools */
+  .tools{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  .tool{ background:var(--glass); border:1px solid var(--line); border-radius:14px; padding:20px 22px; transition:.25s; }
+  .tool:hover{ border-color:rgba(106,213,255,.35); transform:translateY(-2px); }
+  .tool h3{ font-family:var(--ff-d); font-size:19px; font-weight:600; display:flex; align-items:center; gap:10px; }
+  .tool h3 i{ font-style:normal; font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.14em; color:#041016; background:var(--c1); padding:3px 8px; border-radius:6px; }
+  .tool .what{ color:var(--muted); font-size:14.5px; margin:6px 0 8px; }
+  .tool .used{ color:#d5deea; font-size:15px; }
+  .tool .used b{ color:var(--c3); font-weight:500; }
+
+  /* steps */
+  .steps{ counter-reset:s; display:grid; gap:14px; }
+  .step{ position:relative; display:grid; grid-template-columns:56px 1fr; gap:18px; background:var(--glass); border:1px solid var(--line); border-radius:14px; padding:20px 22px; }
+  .step::before{ counter-increment:s; content:counter(s,decimal-leading-zero); font-family:var(--ff-d); font-weight:700; font-size:22px; width:52px; height:52px; display:grid; place-items:center; border-radius:12px; color:#041016; background:linear-gradient(135deg,var(--c1),var(--c2)); }
+  .step h3{ font-family:var(--ff-d); font-size:19px; font-weight:600; margin-bottom:4px; }
+  .step p{ color:#c9d3e2; font-size:15.5px; }
+  .step p em{ color:var(--c1); font-style:normal; }
+
+  /* gallery */
+  .gallery{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  figure{ border-radius:14px; overflow:hidden; border:1px solid var(--line); background:var(--bg2); }
+  figcaption{ padding:12px 14px; font-size:14px; color:#c9d3e2; }
+  figcaption b{ color:#fff; font-family:var(--ff-d); font-weight:600; }
+
+  /* features + problems */
+  .grid2{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  .card{ background:var(--glass); border:1px solid var(--line); border-radius:14px; padding:20px 22px; }
+  .card h3{ font-family:var(--ff-d); font-size:18px; font-weight:600; margin-bottom:6px; }
+  .card p{ color:#c9d3e2; font-size:15px; }
+  .card .tag{ display:inline-block; font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.12em; color:var(--c3); margin-bottom:6px; text-transform:uppercase; }
+  ul.plain{ list-style:none; display:grid; gap:10px; max-width:820px; }
+  ul.plain li{ position:relative; padding-left:24px; color:#c9d3e2; font-size:16px; }
+  ul.plain li::before{ content:"◆"; position:absolute; left:0; top:1px; color:var(--c1); font-size:12px; }
+
+  /* end CTA */
+  .end{ margin:70px 0 50px; text-align:center; background:linear-gradient(135deg,rgba(106,213,255,.10),rgba(183,155,255,.08)); border:1px solid var(--line); border-radius:20px; padding:48px 24px; }
+  .end h2{ margin-bottom:8px; }
+  .end p{ color:var(--muted); margin-bottom:24px; }
+  .end .btn-live{ font-size:17px; padding:14px 28px; }
+  footer{ border-top:1px solid var(--line); padding:26px 0 40px; color:var(--muted); font-size:13.5px; }
+  footer .wrap{ display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; }
+
+  @media (max-width:820px){
+    .facts{ grid-template-columns:repeat(2,1fr); } .tools,.grid2,.gallery{ grid-template-columns:1fr; }
+    .step{ grid-template-columns:1fr; } .top .btn{ padding:9px 15px; font-size:14px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="back" href="../#projects">← Back to portfolio</a>
+    <a class="btn btn-live" href="../helicopter/" target="_blank" rel="noopener">Live demo ↗</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="kick">Project · 3D on the web</div>
+    <h1>Helicopter <span>Archive</span></h1>
+    <p class="lead">A web page where you can walk around four real military helicopters in 3D — the UH-60 Black Hawk, AH-64 Apache, CH-47 Chinook and Mi-24 Hind. It runs right inside your browser, with no app to install. You can click any part of a helicopter to learn what it does, and change the weather, the light and the camera like a film director.</p>
+    <div class="cta">
+      <a class="btn btn-live" href="../helicopter/" target="_blank" rel="noopener">Open the live demo ↗</a>
+      <a class="btn btn-ghost" href="#how">How it works ↓</a>
+    </div>
+    <div class="shot"><img src="./img/blackhawk.webp" alt="UH-60 Black Hawk standing on a helipad in the 3D viewer" width="1600" height="900"></div>
+    <div class="facts">
+      <div class="fact"><b>4</b><span>real helicopters, built to their true size</span></div>
+      <div class="fact"><b>~1 million</b><span>tiny triangles make up all four models</span></div>
+      <div class="fact"><b>56 FPS</b><span>smooth motion on a laptop graphics card</span></div>
+      <div class="fact"><b>3–4 MB</b><span>download per helicopter, thanks to compression</span></div>
+    </div>
+  </div>
+
+  <!-- WHAT -->
+  <section>
+    <h2><small>The idea</small>What is it, in simple words?</h2>
+    <p class="body">Think of it as a small online museum hangar. Each helicopter has its own tab at the top. Pick one, and it appears on a helipad with a real sky behind it. You can spin around it with your mouse, zoom in close, and click a part — like the engine, the rotor or the cockpit. The rest of the helicopter turns see-through, the camera flies to that part, and a side panel explains what it is for, what it is made of and its key numbers.</p>
+    <p class="body">I wanted it to feel like a scene from a movie, not like a video game from the 2000s. So everything — the models, the lighting, the colours and even the sound — was made with that "Hollywood" look in mind.</p>
+  </section>
+
+  <!-- GALLERY -->
+  <section>
+    <h2><small>See it</small>What you can do</h2>
+    <div class="gallery">
+      <figure><img src="./img/apache-part.webp" alt="Apache with its nose sensor turret selected and explained in the side panel" loading="lazy"><figcaption><b>Click any part.</b> Here the Apache's nose camera turret is picked. Everything else turns see-through and the panel explains it.</figcaption></figure>
+      <figure><img src="./img/chinook-rain.webp" alt="Chinook in rain with wet ground reflections" loading="lazy"><figcaption><b>Change the weather.</b> Rain with lightning and thunder, wet shiny ground, dust, haze or clear sky.</figcaption></figure>
+      <figure><img src="./img/hind-night.webp" alt="Mi-24 Hind at night with a searchlight" loading="lazy"><figcaption><b>Change the light.</b> Storm, overcast, golden sunset, or night with a searchlight from the nose.</figcaption></figure>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div class="card"><span class="tag">Camera</span><h3>Film-style camera moves</h3><p>Choose a "Shot": a low hero angle, a slow orbit, a fly-by along the side, or a crane shot from above. The camera even has a slight hand-held shake, like a real camera operator.</p></div>
+      <div class="card"><span class="tag">Look</span><h3>Colour styles like a movie</h3><p>Switch between colour "grades" such as Soft glow, Nordic slate, Bleach bypass and Teal &amp; orange. Add film grain, background blur, or black cinema bars at the top and bottom.</p></div>
+      <div class="card"><span class="tag">Motion</span><h3>Living helicopters</h3><p>Rotors spin up and blur into a disc, the red warning light on top flashes, and the wind from the rotors kicks up dust from the ground.</p></div>
+      <div class="card"><span class="tag">Sound</span><h3>Sound made by code</h3><p>The "whop-whop" of the blades, the engine whine, wind and rain are all created live in the browser. Closer to the helicopter means louder sound.</p></div>
+    </div>
+  </section>
+
+  <!-- TOOLS -->
+  <section>
+    <h2><small>Under the hood</small>Languages and tools I used</h2>
+    <p class="sub">Each tool did one clear job. Here is what each one is, and what I used it for.</p>
+    <div class="tools">
+      <div class="tool"><h3><i>LANGUAGE</i> JavaScript</h3><p class="what">The main programming language of every website.</p><p class="used"><b>Used for:</b> the whole viewer — loading the helicopters, moving the camera, handling clicks, tabs, buttons and the info panel.</p></div>
+      <div class="tool"><h3><i>LIBRARY</i> Three.js</h3><p class="what">A free toolkit that lets JavaScript draw 3D scenes on a web page, using your computer's graphics card.</p><p class="used"><b>Used for:</b> showing the 3D models, lights, shadows, sky and ground.</p></div>
+      <div class="tool"><h3><i>LANGUAGE</i> GLSL</h3><p class="what">A small language for programs that run on the graphics card, deciding the colour of every pixel very fast.</p><p class="used"><b>Used for:</b> the film look — colour grading, film grain, lens flare, rotor blur, the searchlight beam and wet puddles on the ground.</p></div>
+      <div class="tool"><h3><i>LANGUAGE</i> Python</h3><p class="what">A popular, easy-to-read programming language.</p><p class="used"><b>Used for:</b> I wrote one Python script per helicopter. The script tells Blender exactly how to build every part — body, cockpit, engines, wheels and blades.</p></div>
+      <div class="tool"><h3><i>3D APP</i> Blender</h3><p class="what">Free, professional 3D software used for films and games.</p><p class="used"><b>Used for:</b> running my Python scripts to create the models, and "baking" the paint, dirt and panel lines into images.</p></div>
+      <div class="tool"><h3><i>WEB</i> HTML &amp; CSS</h3><p class="what">HTML builds the page structure; CSS makes it look good.</p><p class="used"><b>Used for:</b> the tabs, side panel, buttons, loading screen and the control bar at the bottom.</p></div>
+      <div class="tool"><h3><i>BROWSER</i> Web Audio API</h3><p class="what">The sound system built into every modern browser.</p><p class="used"><b>Used for:</b> making the rotor, engine, wind, rain and thunder sounds live in code — no audio files needed.</p></div>
+      <div class="tool"><h3><i>FORMAT</i> GLB · Draco · WebP</h3><p class="what">GLB is a single-file format for 3D models. Draco shrinks the shape data; WebP shrinks the images.</p><p class="used"><b>Used for:</b> packing each detailed helicopter into one small 3–4 MB file that loads quickly.</p></div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section id="how">
+    <h2><small>Step by step</small>How it works</h2>
+    <p class="sub">From real photos to a moving helicopter in your browser — the whole journey in eight steps.</p>
+    <div class="steps">
+      <div class="step"><div><h3>Study the real helicopters</h3><p>I collected four real photos of each helicopter from different angles, plus their official sizes (length, height, rotor width). Every model is built to its <em>true size in metres</em>.</p></div></div>
+      <div class="step"><div><h3>Build the shape with code</h3><p>Instead of drawing by hand, my Python scripts build each helicopter inside Blender. The body is made like <em>slicing a loaf of bread</em>: I describe the shape of many thin slices from nose to tail, and Blender joins them into one smooth body. Wings, wheels and blades are added the same way, and the left side is mirrored to make the right side.</p></div></div>
+      <div class="step"><div><h3>Paint it like a real aircraft</h3><p>A paint recipe adds the army colour or camouflage, thin lines between metal panels, rows of rivets, dirt streaks running down the sides, and chipped paint on the edges — the small signs of wear that make it look real.</p></div></div>
+      <div class="step"><div><h3>"Bake" the paint into pictures</h3><p>Working out all that paint live would be too slow for a website. So Blender uses the graphics card to <em>save it into three images</em>: one for colour, one for shininess, and one for tiny bumps. The browser then just reads the pictures.</p></div></div>
+      <div class="step"><div><h3>Pack it into one small file</h3><p>Each helicopter is saved as a single GLB file, with the shape and pictures compressed. Every part is labelled (engine, cockpit, rotor…) so the website knows which piece you clicked.</p></div></div>
+      <div class="step"><div><h3>Light it with a real sky</h3><p>In the browser, Three.js loads the file. The light comes from a <em>360° photo of a real sky</em> (called an HDRI), so reflections on the glass and metal match the sky you see. The code even finds where the sun is in that photo and points the shadows the right way.</p></div></div>
+      <div class="step"><div><h3>Add the film camera effects</h3><p>Like a movie camera lens, the picture goes through effects: soft shadows in corners and gaps, a blurred background with the helicopter in focus, a glow around bright lights, a colour style, film grain and a dark edge around the frame.</p></div></div>
+      <div class="step"><div><h3>Make it interactive and add sound</h3><p>When you click, the code sends an <em>invisible line from your mouse into the scene</em> and checks which part it hits first. That part stays solid, the rest fade, and the panel fills in with typing text. Meanwhile the sound engine creates the rotor noise to match the helicopter and how far away you are.</p></div></div>
+    </div>
+  </section>
+
+  <!-- PROBLEMS -->
+  <section>
+    <h2><small>Real engineering</small>Problems I solved along the way</h2>
+    <div class="grid2">
+      <div class="card"><span class="tag">Speed</span><h3>Baking went from about an hour to a few minutes</h3><p>Blender was rebuilding the whole scene for each of about 150 painted parts, again and again. I merged all parts into one temporary copy just for baking — the same result, many times faster.</p></div>
+      <div class="card"><span class="tag">Bug</span><h3>Half the screen went black</h3><p>The night searchlight sat so close to the nose that it made "infinite" brightness on a few pixels, and the blur effects spread that error across the screen. I moved the light and added a safety filter that cleans any broken pixel before the effects run.</p></div>
+      <div class="card"><span class="tag">Realism</span><h3>Colours that match the photos</h3><p>The first versions looked blue-grey. I compared them side by side with the real photos and corrected the paint to the official army olive colours.</p></div>
+      <div class="card"><span class="tag">Performance</span><h3>Runs on slower computers too</h3><p>The page measures how fast your computer draws the first few seconds. If it is struggling, it quietly switches off the heaviest effects so the motion stays smooth.</p></div>
+    </div>
+  </section>
+
+  <!-- HONEST -->
+  <section>
+    <h2><small>Honest notes</small>What it is — and what it isn't</h2>
+    <ul class="plain">
+      <li>These are original models I built from reference photos. They look like a high-quality film preview, not a real photograph.</li>
+      <li>Some very small parts are simplified, such as the rotor hubs and the Apache's radar dome.</li>
+      <li>The sky photos and ground texture are free public assets from Poly Haven (CC0 licence). The reference photos were used only for comparison and are not part of the website.</li>
+    </ul>
+  </section>
+
+  <!-- END CTA -->
+  <div class="end">
+    <h2>See it for yourself</h2>
+    <p>Best on a laptop or desktop. Click once to start the sound.</p>
+    <a class="btn btn-live" href="../helicopter/" target="_blank" rel="noopener">Open the live demo ↗</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap"><span>© 2026 Akash M — Kanyakumari, India</span><a href="../#projects">← Back to portfolio</a></div>
+</footer>
+
+</body>
+</html>
